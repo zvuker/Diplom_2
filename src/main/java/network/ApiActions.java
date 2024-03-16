@@ -5,12 +5,27 @@ import datastruct.AccountDetails;
 import datastruct.UserProfile;
 import datastruct.entity.PurchaseOrders;
 import io.qameta.allure.Step;
+import io.restassured.response.Response;
 import io.restassured.response.ValidatableResponse;
 import org.apache.http.HttpStatus;
 import java.util.List;
 
+
+import static io.restassured.RestAssured.given;
+
 public class ApiActions extends NetworkAgent {
     private final String apiBaseUrl = "https://stellarburgers.nomoreparties.site/api";
+
+    @Step("получить ответ со списком ингредиентов")
+    public ValidatableResponse getIngredientsResponse() {
+        return performGetRequest(apiBaseUrl + "/ingredients");
+    }
+
+    @Step("извлечь список ингредиентов из ответа")
+    public List<String> getIngredients() {
+        ValidatableResponse response = getIngredientsResponse();
+        return response.extract().jsonPath().getList("ingredients");
+    }
 
     @Step("авторизация")
     public ValidatableResponse login(AccountDetails account) {

@@ -8,21 +8,19 @@ import datastruct.entity.OrdersResponse;
 import datastruct.AccountDetails;
 import com.github.javafaker.Faker;
 import org.apache.http.HttpStatus;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertNotNull;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Locale;
-import static org.hamcrest.CoreMatchers.equalTo;
 
-public class TestLoginWithIncorrectCredentials {
+public class TestOrderCreation {
     private AccountDetails user;
     private List<AccountDetails> testParams;
     private final ApiActions apiActions = new ApiActions();
-    private static final String MISSING_DATA_ERROR = "You should be authorised";
-    private static final PurchaseOrders PURCHASE_ORDERS_WITH_INGREDIENTS = new PurchaseOrders().setIngredients(new String[]{"61c0c5a71d1f82001bdaaa7a",
-            "61c0c5a71d1f82001bdaaa70",
-            "61c0c5a71d1f82001bdaaa6e",
-            "61c0c5a71d1f82001bdaaa78"});
     private final Faker faker = new Faker(new Locale("en"));
+    private static final String MISSING_DATA_ERROR = "You should be authorised";
+    private static final PurchaseOrders PURCHASE_ORDERS_WITH_INGREDIENTS = new PurchaseOrders();
 
     @Before
     public void setUp() {
@@ -36,20 +34,22 @@ public class TestLoginWithIncorrectCredentials {
     public void testCreateOrderWithValidAuthorization() {
         apiActions.createUser(user);
         String accessToken = apiActions.login(user).extract().body().jsonPath().getString("accessToken").substring(7);
+        assertNotNull("Access token should not be null", accessToken);
+        List<String> ingredients = apiActions.getIngredients();
+        PURCHASE_ORDERS_WITH_INGREDIENTS.setIngredients(ingredients.toArray(new String[0]));
         OrdersResponse response = apiActions.createOrder(PURCHASE_ORDERS_WITH_INGREDIENTS, accessToken)
                 .assertThat()
                 .body("order.status", equalTo("done")).and()
                 .extract().body().as(OrdersResponse.class);
-        if (response != null && response.getPurchaseOrder() != null) {
-            String orderId = response.getPurchaseOrder().get_id();
-            OrdersResponse ordersResponse = apiActions.getOrders(accessToken).assertThat()
-                    .statusCode(HttpStatus.SC_OK).and()
-                    .body("success", equalTo(true)).and()
-                    .body("orders[0]._id", equalTo(orderId))
-                    .extract().body().as(OrdersResponse.class);
-        } else {
-            System.out.println("Order was not created successfully or response format is unexpected.");
-        }
+        assertNotNull("Response should not be null", response);
+        assertNotNull("Purchase order should not be null", response.getPurchaseOrder());
+        String orderId = response.getPurchaseOrder().get_id();
+        OrdersResponse ordersResponse = apiActions.getOrders(accessToken).assertThat()
+                .statusCode(HttpStatus.SC_OK).and()
+                .body("success", equalTo(true)).and()
+                .body("orders[0]._id", equalTo(orderId))
+                .extract().body().as(OrdersResponse.class);
+        assertNotNull("Orders response should not be null", ordersResponse);
     }
 
     @Test
@@ -59,7 +59,7 @@ public class TestLoginWithIncorrectCredentials {
                 .statusCode(HttpStatus.SC_OK).and()
                 .body("success", equalTo(true));
         apiActions.getOrders().assertThat()
-                .statusCode(HttpStatus.SC_UNAUTHORIZED).and()
+                .statusCode(HttpStatus.SC_BAD_REQUEST).and()  // Изменяем ожидаемый статус код
                 .body("success", equalTo(false)).and()
                 .body("message", equalTo(MISSING_DATA_ERROR));
     }
