@@ -1,4 +1,6 @@
 import datastruct.AccountDetails;
+import io.qameta.allure.Description;
+import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.ValidatableResponse;
 import network.ApiActions;
 import org.junit.After;
@@ -22,19 +24,22 @@ public class OrderAPITest {
         accessToken = response.extract().jsonPath().getString("accessToken");
     }
     @Test
+    @DisplayName("тест получения заказов пользователя")
+    @Description("тест проверяет функциональность получения заказов пользователя")
     public void testGetUserOrders() {
         ValidatableResponse response = apiActions.getOrders(accessToken);
         apiActions.verifyUserOrdersResponse(response);
     }
 
     @Test
+    @DisplayName("тест получения всех заказов")
+    @Description("тест проверяет функциональность получения всех заказов")
     public void testGetAllOrders() {
         ValidatableResponse response = apiActions.getAllOrders(accessToken);
         apiActions.verifyAllOrdersResponse(response);
     }
     @After
     public void cleanUp() {
-        // Удаляем созданного пользователя после выполнения теста
         List<AccountDetails> testParams = new ArrayList<>();
         AccountDetails user;
         testParams.add(user);

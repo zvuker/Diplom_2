@@ -1,6 +1,7 @@
 import com.github.javafaker.Faker;
 import datastruct.AccountDetails;
 import datastruct.RegistrationReply;
+import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
 import network.ApiActions;
 import org.junit.After;
@@ -28,7 +29,8 @@ public class TestUserAuthenticationProfile {
     }
 
     @Test
-    @DisplayName("логин, существующий пользователь")
+    @DisplayName("cоздание заказа с авторизацией")
+    @Description("тест проверяет создание заказа с валидной авторизацией и ожидает ответ с данными о заказе")
     public void testLoginExistingUserReturnsUserProfile() {
         apiActions.createUser(user);
         RegistrationReply reply = apiActions.loginAndReturnProfile(user);
@@ -36,7 +38,8 @@ public class TestUserAuthenticationProfile {
     }
 
     @Test
-    @DisplayName("неправильный логин или пароль - ошибка")
+    @DisplayName("неправильный логин/пароль")
+    @Description("тест проверяет ошибку ввода неправильного логина/пароля")
     public void testLoginWithIncorrectCredentialsShowsError() {
         String expectMessage = "email or password are incorrect";
         apiActions.createUser(user);

@@ -40,7 +40,8 @@ public class TestAccountModification {
 
     @Test
     @Parameters(method = "testParams")
-    @DisplayName("изменить данные пользователя, с авторизацией и без авторизации")
+    @DisplayName("Изменение данных пользователя, с авторизацией и без авторизации")
+    @Description("Тест проверяет функциональность изменения данных пользователя с авторизацией и без авторизации")
     public void modifyAnyFieldSuccessful(UserProfile userProfile) {
         if (userProfile.getEmail() != null) {
             user.setEmail(userProfile.getEmail());

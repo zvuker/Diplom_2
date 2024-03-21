@@ -1,6 +1,8 @@
 import datastruct.AccountDetails;
 import datastruct.entity.OrdersResponse;
 import datastruct.entity.PurchaseOrders;
+import io.qameta.allure.Description;
+import io.qameta.allure.junit4.DisplayName;
 import network.ApiActions;
 import org.junit.After;
 import org.junit.Before;
@@ -27,6 +29,8 @@ public class TestOrderCreation {
     }
 
     @Test
+    @DisplayName("Создание заказа с валидной авторизацией")
+    @Description("Этот тест проверяет создание заказа с валидной авторизацией и ожидает успешного ответа с данными о заказе")
     public void testCreateOrderWithValidAuthorization() {
         OrdersResponse response = apiActions.createOrderWithValidAuthorization(user);
         assertNotNull("Response should not be null", response);
@@ -34,6 +38,8 @@ public class TestOrderCreation {
     }
 
     @Test
+    @DisplayName("создание заказа без авторизации")
+    @Description("тест проверяет создание заказа без авторизации и ожидает соответствующего ответа")
     public void testCreateOrderWithoutAuthorization() {
         apiActions.createOrderWithoutAuthorizationAndVerifyResponse();
     }

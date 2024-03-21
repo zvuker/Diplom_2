@@ -1,6 +1,7 @@
 import com.github.javafaker.Faker;
 import datastruct.AccountDetails;
 import datastruct.entity.OrdersResponse;
+import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.ValidatableResponse;
 import network.ApiActions;
@@ -27,13 +28,15 @@ public class TestCreatePurchaseOrder {
     }
 
     @Test
-    @DisplayName("Создание заказа без авторизации")
+    @DisplayName("создание заказа без авторизации")
+    @Description("тест проверяет создание заказа без авторизации")
     public void testOrderCreationWithoutAuthorization() {
         apiActions.createOrderWithoutAuthorizationAndVerifyResponse();
     }
 
     @Test
-    @DisplayName("Создание заказа с авторизацией")
+    @DisplayName("создание заказа с авторизацией")
+    @Description("тест проверяет создание заказа с авторизацией")
     public void testOrderCreationWithAuthorization() {
         ValidatableResponse loginResponse = apiActions.login(user);
         String accessToken = loginResponse.extract().body().jsonPath().getString("accessToken");
@@ -43,7 +46,8 @@ public class TestCreatePurchaseOrder {
     }
 
     @Test
-    @DisplayName("Создание заказа с неправильными ингредиентами")
+    @DisplayName("создание заказа с неправильными ингредиентами")
+    @Description("тест проверяет создание заказа с неправильными ингредиентами")
     public void testOrderCreationWithInvalidIngredientHash() {
         ValidatableResponse loginResponse = apiActions.login(user);
         String accessToken = loginResponse.extract().body().jsonPath().getString("accessToken");
@@ -51,7 +55,8 @@ public class TestCreatePurchaseOrder {
     }
 
     @Test
-    @DisplayName("Создание заказа без ингредиентов")
+    @DisplayName("создание заказа без ингредиентов")
+    @Description("тест проверяет создание заказа без ингредиентов")
     public void testOrderCreationWithoutIngredients() {
         apiActions.createOrderWithoutIngredients(user);
     }
