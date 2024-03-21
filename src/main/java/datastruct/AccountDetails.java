@@ -19,4 +19,6 @@ public class AccountDetails {
     public String toString() {
         return String.format("аккаунт. имя: %s; email: %s; пароль: %s.", name, email, password);
     }
+
+
 }

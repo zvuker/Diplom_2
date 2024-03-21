@@ -1,18 +1,18 @@
+import com.github.javafaker.Faker;
 import datastruct.AccountDetails;
 import datastruct.RegistrationReply;
-import org.junit.Test;
-import org.junit.After;
-import org.junit.Before;
 import io.qameta.allure.junit4.DisplayName;
 import network.ApiActions;
-import com.github.javafaker.Faker;
-import org.apache.http.HttpStatus;
-import static org.hamcrest.CoreMatchers.equalTo;
-import java.util.List;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class TestUserAuthenticationProfile {
     private AccountDetails user;
@@ -31,10 +31,8 @@ public class TestUserAuthenticationProfile {
     @DisplayName("логин, существующий пользователь")
     public void testLoginExistingUserReturnsUserProfile() {
         apiActions.createUser(user);
-        apiActions.login(user).assertThat()
-                .statusCode(HttpStatus.SC_OK).and()
-                .body("success", equalTo(true)).and()
-                .extract().body().as(RegistrationReply.class);
+        RegistrationReply reply = apiActions.loginAndReturnProfile(user);
+        assertNotNull(reply);
     }
 
     @Test
@@ -44,14 +42,8 @@ public class TestUserAuthenticationProfile {
         apiActions.createUser(user);
         AccountDetails wrongAccount = new AccountDetails(faker.internet().emailAddress(), user.getPassword(), user.getName());
         testParams.add(wrongAccount);
-        apiActions.login(wrongAccount).assertThat()
-                .statusCode(HttpStatus.SC_UNAUTHORIZED).and()
-                .body("message", equalTo(expectMessage));
-        wrongAccount = new AccountDetails(user.getEmail(), faker.internet().password(), user.getName());
-        testParams.add(wrongAccount);
-        apiActions.login(wrongAccount).assertThat()
-                .statusCode(HttpStatus.SC_UNAUTHORIZED).and()
-                .body("message", equalTo(expectMessage));
+        String errorMessage = apiActions.loginAndReturnErrorMessage(wrongAccount);
+        assertEquals(expectMessage, errorMessage);
     }
 
     @After

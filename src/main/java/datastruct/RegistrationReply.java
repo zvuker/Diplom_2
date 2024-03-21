@@ -13,4 +13,9 @@ public class RegistrationReply {
     private String message;
     private String accessToken;
     private String refreshToken;
+
+    public boolean isSuccess() {
+        return success != null && success;
+    }
+
 }
